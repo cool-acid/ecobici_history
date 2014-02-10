@@ -65,7 +65,7 @@ $(function(){
     }
     $.get("http://www.corsproxy.com/datos.labplc.mx/movilidad/ecobici/usuario/" + cardID + ".json", function (data) {
       if (!data) {
-        console.log('No se han encontrado registros. Revisa el número de tu tarjeta.');
+        alert('No se han encontrado registros. Revisa el número de tu tarjeta.');
         return;
       }
       window.viajes = data.ecobici.viajes;
@@ -75,8 +75,14 @@ $(function(){
     }, 'json');
   });
   $(window).on('finish', function(){
-    var start = new google.maps.LatLng(estaciones[viajes[actualtrip].station_removed].latitud, estaciones[viajes[actualtrip].station_removed].longitud);
-    var end = new google.maps.LatLng(estaciones[viajes[actualtrip].station_arrived].latitud, estaciones[viajes[actualtrip].station_arrived].longitud);
-    animate(start, end, map);
+    if (actualtrip == viajes.length) return; // No more trips
+    if (viajes[actualtrip].station_removed != viajes[actualtrip].station_arrived){
+      var start = new google.maps.LatLng(estaciones[viajes[actualtrip].station_removed].latitud, estaciones[viajes[actualtrip].station_removed].longitud);
+      var end = new google.maps.LatLng(estaciones[viajes[actualtrip].station_arrived].latitud, estaciones[viajes[actualtrip].station_arrived].longitud);
+      animate(start, end, map);
+    }else{
+      window.actualtrip++;
+      $(window).trigger('finish');
+    }
   });
 });
