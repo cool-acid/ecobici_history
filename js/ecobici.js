@@ -12,10 +12,11 @@ function animate(start, end, map) {
   var markerStart = new google.maps.Marker({position:start, map:map});
   var markerEnd = new google.maps.Marker({position:end, map:map});
   var markerBike = new google.maps.Marker({position:start, map:map});
-  subanimate(markerBike, start, end, 0, steps)
+  var trackLine = new google.maps.Polyline({map: map, path: [start]});
+  subanimate(markerBike, start, end, 0, steps, trackLine);
 }
 
-function subanimate(marker, start, end, actualstep, totalsteps) {
+function subanimate(marker, start, end, actualstep, totalsteps, line) {
   if (actualstep == totalsteps)
     return;
   // We calculate deltas
@@ -25,8 +26,11 @@ function subanimate(marker, start, end, actualstep, totalsteps) {
   var markerPosition = marker.getPosition();
   var newPosition = new google.maps.LatLng(markerPosition.lat() + d_lat, markerPosition.lng() + d_lng);
   marker.setPosition(newPosition);
+  if (line) {
+    line.setPath([start, newPosition]);
+  }
   // Schedulling next movement
-  setTimeout(function(){subanimate(marker, start, end, actualstep + 1, totalsteps)}, 20);
+  setTimeout(function(){subanimate(marker, start, end, actualstep + 1, totalsteps, line)}, 20);
 }
 
 $(function(){
