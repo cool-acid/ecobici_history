@@ -52,8 +52,23 @@ $(function(){
       new google.maps.Marker({position:new google.maps.LatLng(estacion.latitud, estacion.longitud), map:map, icon: stationicon});
     });
   }, 'json');
-  $('#btnAnimate').on('click', function (e) {
-    animate(start, end, map);
+  $('#btnAnimate').on('click', function(e){
     e.preventDefault();
+    var cardID = $('#cardID').val();
+    if (!cardID) {
+      alert('Si no me dices el numero de tarjeta no puedo calcular tus rutas. No soy adivino.');
+      return;
+    }
+    $.get("http://www.corsproxy.com/datos.labplc.mx/movilidad/ecobici/usuario/" + cardID + ".json", function (data) {
+      if (!data) {
+        console.log('No se han encontrado registros. Revisa el número de tu tarjeta.');
+        return;
+      }
+      $.each(data.ecobici.viajes, function(index, viaje){
+        var start = new google.maps.LatLng(estaciones[viaje.station_removed].latitud, estaciones[viaje.station_removed].longitud);
+        var end = new google.maps.LatLng(estaciones[viaje.station_arrived].latitud, estaciones[viaje.station_arrived].longitud);
+        animate(start, end, map);
+      });
+    }, 'json');
   });
 });
