@@ -9,10 +9,27 @@ function map_init() {
 
 function animate(start, end, map) {
   var steps = 50;
-  var markerStart = new google.maps.Marker({position:start, map:map});
-  var markerEnd = new google.maps.Marker({position:end, map:map});
-  var markerBike = new google.maps.Marker({position:start, map:map});
-  var trackLine = new google.maps.Polyline({map: map, path: [start], strokeColor:'#63C15D', strokeOpacity: 0.4});
+  var stationicon = {
+    fillColor: '#8C2197',
+    fillOpacity: 1,
+    strokeWeight: 1,
+    strokeColor: '#8C2197',
+    path: google.maps.SymbolPath.CIRCLE,
+    scale: 3,
+    zIndex: 10
+  };
+  var bikeicon = {
+    fillColor: '#FF0000',
+    fillOpacity: 1,
+    strokeWeight: 0,
+    path: google.maps.SymbolPath.CIRCLE,
+    scale: 5,
+    zIndex: 10
+  };
+  var markerStart = new google.maps.Marker({position:start, map:map, icon:stationicon});
+  var markerEnd = new google.maps.Marker({position:end, map:map, icon:stationicon});
+  var markerBike = new google.maps.Marker({position:start, map:map, icon:bikeicon});
+  var trackLine = new google.maps.Polyline({map: map, path: [start], strokeColor:'#000000', strokeOpacity: 0.4});
   subanimate(markerBike, start, end, 0, steps, trackLine);
 }
 
@@ -20,6 +37,7 @@ function subanimate(marker, start, end, actualstep, totalsteps, line) {
   if (actualstep == totalsteps){
     $(window).trigger('finish');
     actualtrip = actualtrip + 1;
+    marker.setMap(null);
     return;
   }
   // We calculate deltas
@@ -45,9 +63,10 @@ $(function(){
   $.get('js/estaciones.json', function(data){
     window.estaciones = data;
     var stationicon = {
-      fillColor: '#8C2197',
-      fillOpacity: 1,
-      strokeWeight: 0,
+      fillColor: '#FFFFFF',
+      fillOpacity: 0,
+      strokeWeight: 2,
+      strokeColor: '#8C2197',
       path: google.maps.SymbolPath.CIRCLE,
       scale: 3,
       zIndex: 10
