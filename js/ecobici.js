@@ -12,7 +12,7 @@ function animate(start, end, map) {
   var markerStart = new google.maps.Marker({position:start, map:map});
   var markerEnd = new google.maps.Marker({position:end, map:map});
   var markerBike = new google.maps.Marker({position:start, map:map});
-  var trackLine = new google.maps.Polyline({map: map, path: [start]});
+  var trackLine = new google.maps.Polyline({map: map, path: [start], strokeColor:'#63C15D', strokeOpacity: 0.4});
   subanimate(markerBike, start, end, 0, steps, trackLine);
 }
 
