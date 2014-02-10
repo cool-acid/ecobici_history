@@ -1,7 +1,7 @@
 function map_init() {
   var mapOptions = {
     center: new google.maps.LatLng(19.422887,-99.167418),
-    zoom: 13
+    zoom: 14
   };
   var map = new google.maps.Map(document.getElementById("theMap"), mapOptions);
   return map;
@@ -40,8 +40,16 @@ $(function(){
   // Loading all stations
   $.get('js/estaciones.json', function(data){
     window.estaciones = data;
+    var stationicon = {
+      fillColor: '#8C2197',
+      fillOpacity: 1,
+      strokeWeight: 0,
+      path: google.maps.SymbolPath.CIRCLE,
+      scale: 3,
+      zIndex: 10
+    }
     $.each(data, function(index, estacion) {
-      new google.maps.Marker({position:new google.maps.LatLng(estacion.latitud, estacion.longitud), map:map})
+      new google.maps.Marker({position:new google.maps.LatLng(estacion.latitud, estacion.longitud), map:map, icon: stationicon});
     });
   }, 'json');
   $('#btnAnimate').on('click', function (e) {
