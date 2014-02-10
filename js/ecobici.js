@@ -17,8 +17,11 @@ function animate(start, end, map) {
 }
 
 function subanimate(marker, start, end, actualstep, totalsteps, line) {
-  if (actualstep == totalsteps)
+  if (actualstep == totalsteps){
+    $(window).trigger('finish');
+    actualtrip = actualtrip + 1;
     return;
+  }
   // We calculate deltas
   var d_lat = (end.lat() - start.lat()) / totalsteps;
   var d_lng = (end.lng() - start.lng()) / totalsteps;
@@ -35,6 +38,7 @@ function subanimate(marker, start, end, actualstep, totalsteps, line) {
 
 $(function(){
   var map = map_init();
+  window.actualtrip = 0;
   // var start = new google.maps.LatLng(19.41544,-99.164856);
   // var end = new google.maps.LatLng(19.423535,-99.1446);
   // Loading all stations
@@ -64,11 +68,15 @@ $(function(){
         console.log('No se han encontrado registros. Revisa el número de tu tarjeta.');
         return;
       }
-      $.each(data.ecobici.viajes, function(index, viaje){
-        var start = new google.maps.LatLng(estaciones[viaje.station_removed].latitud, estaciones[viaje.station_removed].longitud);
-        var end = new google.maps.LatLng(estaciones[viaje.station_arrived].latitud, estaciones[viaje.station_arrived].longitud);
-        animate(start, end, map);
-      });
+      window.viajes = data.ecobici.viajes;
+      var start = new google.maps.LatLng(estaciones[viajes[0].station_removed].latitud, estaciones[viajes[0].station_removed].longitud);
+      var end = new google.maps.LatLng(estaciones[viajes[0].station_arrived].latitud, estaciones[viajes[0].station_arrived].longitud);
+      animate(start, end, map);
     }, 'json');
+  });
+  $(window).on('finish', function(){
+    var start = new google.maps.LatLng(estaciones[viajes[actualtrip].station_removed].latitud, estaciones[viajes[actualtrip].station_removed].longitud);
+    var end = new google.maps.LatLng(estaciones[viajes[actualtrip].station_arrived].latitud, estaciones[viajes[actualtrip].station_arrived].longitud);
+    animate(start, end, map);
   });
 });
