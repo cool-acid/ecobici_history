@@ -35,8 +35,15 @@ function subanimate(marker, start, end, actualstep, totalsteps, line) {
 
 $(function(){
   var map = map_init();
-  var start = new google.maps.LatLng(19.41544,-99.164856);
-  var end = new google.maps.LatLng(19.423535,-99.1446);
+  // var start = new google.maps.LatLng(19.41544,-99.164856);
+  // var end = new google.maps.LatLng(19.423535,-99.1446);
+  // Loading all stations
+  $.get('js/estaciones.json', function(data){
+    window.estaciones = data;
+    $.each(data, function(index, estacion) {
+      new google.maps.Marker({position:new google.maps.LatLng(estacion.latitud, estacion.longitud), map:map})
+    });
+  }, 'json');
   $('#btnAnimate').on('click', function (e) {
     animate(start, end, map);
     e.preventDefault();
