@@ -12,7 +12,7 @@ function animate(start, end, map) {
   var markerStart = new google.maps.Marker({position:start, map:map});
   var markerEnd = new google.maps.Marker({position:end, map:map});
   var markerBike = new google.maps.Marker({position:start, map:map});
-  setTimeout(function(){subanimate(markerBike, start, end, 0, steps)}, 50);
+  subanimate(markerBike, start, end, 0, steps)
 }
 
 function subanimate(marker, start, end, actualstep, totalsteps) {
@@ -26,7 +26,7 @@ function subanimate(marker, start, end, actualstep, totalsteps) {
   var newPosition = new google.maps.LatLng(markerPosition.lat() + d_lat, markerPosition.lng() + d_lng);
   marker.setPosition(newPosition);
   // Schedulling next movement
-  setTimeout(function(){subanimate(marker, start, end, actualstep + 1, totalsteps)}, 50);
+  setTimeout(function(){subanimate(marker, start, end, actualstep + 1, totalsteps)}, 20);
 }
 
 $(function(){
