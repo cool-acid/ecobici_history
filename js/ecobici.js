@@ -33,5 +33,8 @@ $(function(){
   var map = map_init();
   var start = new google.maps.LatLng(19.41544,-99.164856);
   var end = new google.maps.LatLng(19.423535,-99.1446);
-  animate(start, end, map);
+  $('#btnAnimate').on('click', function (e) {
+    animate(start, end, map);
+    e.preventDefault();
+  });
 });
