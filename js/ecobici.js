@@ -12,10 +12,11 @@ function animate(start, end, map) {
   var markerStart = new google.maps.Marker({position:start, map:map});
   var markerEnd = new google.maps.Marker({position:end, map:map});
   var markerBike = new google.maps.Marker({position:start, map:map});
-  setTimeout(function(){subanimate(markerBike, start, end, 0, steps)}, 50);
+  var trackLine = new google.maps.Polyline({map: map, path: [start]});
+  subanimate(markerBike, start, end, 0, steps, trackLine);
 }
 
-function subanimate(marker, start, end, actualstep, totalsteps) {
+function subanimate(marker, start, end, actualstep, totalsteps, line) {
   if (actualstep == totalsteps)
     return;
   // We calculate deltas
@@ -25,13 +26,26 @@ function subanimate(marker, start, end, actualstep, totalsteps) {
   var markerPosition = marker.getPosition();
   var newPosition = new google.maps.LatLng(markerPosition.lat() + d_lat, markerPosition.lng() + d_lng);
   marker.setPosition(newPosition);
+  if (line) {
+    line.setPath([start, newPosition]);
+  }
   // Schedulling next movement
-  setTimeout(function(){subanimate(marker, start, end, actualstep + 1, totalsteps)}, 50);
+  setTimeout(function(){subanimate(marker, start, end, actualstep + 1, totalsteps, line)}, 20);
 }
 
 $(function(){
   var map = map_init();
-  var start = new google.maps.LatLng(19.41544,-99.164856);
-  var end = new google.maps.LatLng(19.423535,-99.1446);
-  animate(start, end, map);
+  // var start = new google.maps.LatLng(19.41544,-99.164856);
+  // var end = new google.maps.LatLng(19.423535,-99.1446);
+  // Loading all stations
+  $.get('js/estaciones.json', function(data){
+    window.estaciones = data;
+    $.each(data, function(index, estacion) {
+      new google.maps.Marker({position:new google.maps.LatLng(estacion.latitud, estacion.longitud), map:map})
+    });
+  }, 'json');
+  $('#btnAnimate').on('click', function (e) {
+    animate(start, end, map);
+    e.preventDefault();
+  });
 });
