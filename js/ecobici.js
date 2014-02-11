@@ -47,6 +47,7 @@ function subanimate(marker, start, end, actualstep, totalsteps, line) {
   var markerPosition = marker.getPosition();
   var newPosition = new google.maps.LatLng(markerPosition.lat() + d_lat, markerPosition.lng() + d_lng);
   marker.setPosition(newPosition);
+  window.estacionesvisitadas.push(newPosition);
   if (line) {
     line.setPath([start, newPosition]);
   }
@@ -55,10 +56,9 @@ function subanimate(marker, start, end, actualstep, totalsteps, line) {
 }
 
 $(function(){
-  var map = map_init();
+  window.map = map_init();
   window.actualtrip = 0;
-  // var start = new google.maps.LatLng(19.41544,-99.164856);
-  // var end = new google.maps.LatLng(19.423535,-99.1446);
+  window.estacionesvisitadas = [];
   // Loading all stations
   $.get('js/estaciones.json', function(data){
     window.estaciones = data;
@@ -91,10 +91,19 @@ $(function(){
       var start = new google.maps.LatLng(estaciones[viajes[0].station_removed].latitud, estaciones[viajes[0].station_removed].longitud);
       var end = new google.maps.LatLng(estaciones[viajes[0].station_arrived].latitud, estaciones[viajes[0].station_arrived].longitud);
       animate(start, end, map);
-    }, 'json');
+    }, 'json').fail(function(){
+      alert('Ups! Parece que el API no esta respondiendo. Intentalo nuevamente en unos segundos.');
+    });
   });
   $(window).on('finish', function(){
-    if (actualtrip == viajes.length) return; // No more trips
+    if (actualtrip == viajes.length){
+      // heatmap = new google.maps.visualization.HeatmapLayer({
+      //   data: estacionesvisitadas,
+      //   map: map,
+      //   radius: 20
+      // });
+      return;
+    } // No more trips
     if (viajes[actualtrip].station_removed != viajes[actualtrip].station_arrived){
       var start = new google.maps.LatLng(estaciones[viajes[actualtrip].station_removed].latitud, estaciones[viajes[actualtrip].station_removed].longitud);
       var end = new google.maps.LatLng(estaciones[viajes[actualtrip].station_arrived].latitud, estaciones[viajes[actualtrip].station_arrived].longitud);
